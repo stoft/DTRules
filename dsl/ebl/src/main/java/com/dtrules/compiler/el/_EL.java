@@ -8,6 +8,4 @@ import com.dtrules.compiler.ebl.EBL;
  * @author paulsn
  *
  */
-public class _EL extends EBL {
-
-}
+public class _EL extends EBL {}

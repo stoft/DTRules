@@ -9,9 +9,9 @@ import com.dtrules.mapping.DataMap;
  *
  */
 public interface DataObj {
-    abstract public void write2DataMap(DataMap datamap);
-    
-    public int getId();
-    
-    public boolean getPrinted();
+  public abstract void write2DataMap(DataMap datamap);
+
+  public int getId();
+
+  public boolean getPrinted();
 }

@@ -5,10 +5,10 @@ import com.dtrules.interpreter.IRObject;
 import com.dtrules.interpreter.RType;
 
 public interface IComputeDefaultValue {
-
-    public IRObject computeDefaultValue(
-            IRSession      session, 
-            EntityFactory  ef, 
-            String         defaultstr, 
-            RType          type) throws RulesException;
+  public IRObject computeDefaultValue(
+    IRSession session,
+    EntityFactory ef,
+    String defaultstr,
+    RType type
+  ) throws RulesException;
 }

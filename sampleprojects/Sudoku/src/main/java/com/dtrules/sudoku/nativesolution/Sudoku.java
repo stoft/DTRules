@@ -4,10 +4,10 @@ package com.dtrules.sudoku.nativesolution;
  * Written by Bob Carpenter, released under a Apache 2.0 license
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  * http://www.colloquial.com/games/sudoku/java_sudoku.html
- * 
+ *
  * The <code>Sudoku</code> class provides a static <code>main</code>
  * method allowing it to be called from the command line to print the
- * solution to a specified Sudoku problem.  
+ * solution to a specified Sudoku problem.
  *
  * <p>The following is an example of a Sudoku problem:
  *
@@ -26,7 +26,7 @@ package com.dtrules.sudoku.nativesolution;
  * |   9   | 7   1 |   4   |
  *  -----------------------
  * </pre>
- * 
+ *
  * The goal is to fill in the missing numbers so that
  * every row, column and box contains each of the numbers
  * <code>1-9</code>.  Here is the solution to the
@@ -79,10 +79,10 @@ package com.dtrules.sudoku.nativesolution;
  * The <code>8</code> in the upper left box of the puzzle is encoded
  * as <code>018</code> (<code>0</code> for the row, <code>1</code> for
  * the column, and <code>8</code> for the value).  The <code>4</code>
- * in the lower right box is encoded as <code>874</code>.  
+ * in the lower right box is encoded as <code>874</code>.
  *
  * <p>The full command-line invocation for the above puzzle is:
- * 
+ *
  * <pre>
  * % java -cp . Sudoku 018 034 052 076 \
  *                     113 124 169 171 \
@@ -93,7 +93,7 @@ package com.dtrules.sudoku.nativesolution;
  *                     712 726 761 773 \
  *                     819 837 851 874 \
  * </pre>
- * 
+ *
  * <p>See <a href="http://en.wikipedia.org/wiki/Sudoku">Wikipedia:
  * Sudoku</a> for more information on Sudoku.
  *
@@ -106,87 +106,90 @@ package com.dtrules.sudoku.nativesolution;
  */
 public class Sudoku {
 
-    /**
-     * Print the specified Sudoku problem and its solution.  The
-     * problem is encoded as specified in the class documentation
-     * above.
-     *
-     * @param args The command-line arguments encoding the problem.
-     */
-    public static void main(String[] args) {
-	int[][] matrix = parseProblem(args);
-	writeMatrix(matrix);
-	if (solve(0,0,matrix))    // solves in place
-	    writeMatrix(matrix);
-	else 
-	    System.out.println("NONE");
+  /**
+   * Print the specified Sudoku problem and its solution.  The
+   * problem is encoded as specified in the class documentation
+   * above.
+   *
+   * @param args The command-line arguments encoding the problem.
+   */
+  public static void main(String[] args) {
+    int[][] matrix = parseProblem(args);
+    writeMatrix(matrix);
+    if (
+      solve(0, 0, matrix)
+    ) writeMatrix(matrix); else System.out.println("NONE"); // solves in place
+  }
+
+  static boolean solve(int i, int j, int[][] cells) {
+    if (i == 9) {
+      i = 0;
+      if (++j == 9) return true;
     }
+    if (
+      cells[i][j] != 0
+    ) return solve(i + 1, j, cells); // skip filled cells
 
-    static boolean solve(int i, int j, int[][] cells) {
-	if (i == 9) {
-	    i = 0;
-	    if (++j == 9) 
-		return true; 
-	}
-	if (cells[i][j] != 0)  // skip filled cells
-	    return solve(i+1,j,cells);
-	
-	for (int val = 1; val <= 9; ++val) {
-	    if (legal(i,j,val,cells)) {  
-		cells[i][j] = val;       
-		if (solve(i+1,j,cells))  
-		    return true;
-	    }
-	}
-	cells[i][j] = 0; // reset on backtrack
-	return false;
+    for (int val = 1; val <= 9; ++val) {
+      if (legal(i, j, val, cells)) {
+        cells[i][j] = val;
+        if (solve(i + 1, j, cells)) return true;
+      }
     }
+    cells[i][j] = 0; // reset on backtrack
+    return false;
+  }
 
-    static boolean legal(int i, int j, int val, int[][] cells) {
-	for (int k = 0; k < 9; ++k)  // row
-	    if (val == cells[k][j])
-		return false;
+  static boolean legal(int i, int j, int val, int[][] cells) {
+    for (
+      int k = 0;
+      k < 9;
+      ++k
+    ) if (val == cells[k][j]) return false; // row
 
-	for (int k = 0; k < 9; ++k) // col
-	    if (val == cells[i][k])
-		return false;
+    for (
+      int k = 0;
+      k < 9;
+      ++k
+    ) if (val == cells[i][k]) return false; // col
 
-	int boxRowOffset = (i / 3)*3;
-	int boxColOffset = (j / 3)*3;
-	for (int k = 0; k < 3; ++k) // box
-	    for (int m = 0; m < 3; ++m)
-		if (val == cells[boxRowOffset+k][boxColOffset+m])
-		    return false;
+    int boxRowOffset = (i / 3) * 3;
+    int boxColOffset = (j / 3) * 3;
+    for (
+      int k = 0;
+      k < 3;
+      ++k
+    ) for (int m = 0; m < 3; ++m) if ( // box
+      val == cells[boxRowOffset + k][boxColOffset + m]
+    ) return false;
 
-	return true; // no violations, so it's legal
+    return true; // no violations, so it's legal
+  }
+
+  static int[][] parseProblem(String[] args) {
+    int[][] problem = new int[9][9]; // default 0 vals
+    for (int n = 0; n < args.length; ++n) {
+      int i = Integer.parseInt(args[n].substring(0, 1));
+      int j = Integer.parseInt(args[n].substring(1, 2));
+      int val = Integer.parseInt(args[n].substring(2, 3));
+      problem[i][j] = val;
     }
+    return problem;
+  }
 
-    static int[][] parseProblem(String[] args) {
-	int[][] problem = new int[9][9]; // default 0 vals
-	for (int n = 0; n < args.length; ++n) {
-	    int i = Integer.parseInt(args[n].substring(0,1));   
-	    int j = Integer.parseInt(args[n].substring(1,2));   
-	    int val = Integer.parseInt(args[n].substring(2,3)); 
-	    problem[i][j] = val;
-	}
-	return problem;
+  static void writeMatrix(int[][] solution) {
+    for (int i = 0; i < 9; ++i) {
+      if (i % 3 == 0) System.out.println(" -----------------------");
+      for (int j = 0; j < 9; ++j) {
+        if (j % 3 == 0) System.out.print("| ");
+        System.out.print(
+          solution[i][j] == 0 ? " " : Integer.toString(solution[i][j])
+        );
+
+        System.out.print(' ');
+      }
+      System.out.println("|");
     }
-
-    static void writeMatrix(int[][] solution) {
-	for (int i = 0; i < 9; ++i) {
-	    if (i % 3 == 0)
-		System.out.println(" -----------------------");
-	    for (int j = 0; j < 9; ++j) {
-		if (j % 3 == 0) System.out.print("| ");
-		System.out.print(solution[i][j] == 0
-				 ? " "
-				 : Integer.toString(solution[i][j]));
-		
-		System.out.print(' ');
-	    }
-	    System.out.println("|");
-	}
-	System.out.println(" -----------------------");
-    }
-
+    System.out.println(" -----------------------");
+  }
 }
